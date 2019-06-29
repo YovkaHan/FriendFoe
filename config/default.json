@@ -1,0 +1,10 @@
+{
+  "client": {
+    "url": ""
+  },
+  "server": {
+    "mongoURI": "mongodb://user:user111@ds243897.mlab.com:43897/friend_foe",
+    "host": "localhost",
+    "port": 4010
+  }
+}
