@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {BrowserRouter as Router} from "react-router-dom";
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import createSagaMiddleware from 'redux-saga';
 // import {ConnectedRouter, routerMiddleware} from 'react-router-redux';
@@ -12,20 +13,18 @@ import rootSaga from './src/redux/sagas';
 
 import "./vendor/normalize.css";
 
-const logger = createLogger({duration: true, diff : false});
+const logger = createLogger({duration: true, diff: false});
 // const history = createHistory();
 
 const findTypyes = (action) => {
-    const types = [
-
-    ];
+    const types = [];
 
     return types.some(type => action.type.indexOf(type) >= 0);
 };
 
 const actionSanitizer = action => (
     findTypyes(action) && action.payload ?
-        { ...action, payload: "TOO LONG" } : action
+        {...action, payload: "TOO LONG"} : action
 );
 
 const reduxDevtoolsExtensionOptions = {
@@ -49,7 +48,9 @@ const rootElement = document.getElementById('root');
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <Router>
+            <App/>
+        </Router>
     </Provider>,
     rootElement
 );

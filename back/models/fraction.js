@@ -10,6 +10,7 @@ const FractionSchema = new Schema({
     icon: {
         type: String,
         required: true,
+        default: "http://cdn.onlinewebfonts.com/svg/img_311846.png"
     },
     amount: {
         type: Number,

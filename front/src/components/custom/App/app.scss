@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+$border-color: #9799a96b;
+
+* {
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #236820;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 223, 78, 0.53);
+}
+
+%c-border-style {
+  border-top: 3px ridge $border-color;
+  border-left: 2px solid $border-color;
+  border-right: 2px solid $border-color;
+  border-bottom: 3px ridge $border-color;
+  border-radius: 5px;
+}
+
+.the-app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-header {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 80px;
+  top: 0;
+  left: 0;
+  background: transparent;
+
+  .navs {
+    display: flex;
+    justify-content: center;
+    font-size: 20px;
+
+    a {
+      text-decoration: none;
+      color: black;
+      padding: 10px;
+
+      transition: 0.3s all ease-in-out;
+
+      &:hover {
+        color: blue;
+      }
+    }
+
+    &__item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: capitalize;
+      min-width: 100px;
+      padding: 10px;
+    }
+  }
+}
+
+.main-footer {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 120px;
+
+  background: rgba(96, 95, 255, 0.16);
+
+  bottom: 0;
+  left: 0;
+}
+
+.the-app__page {
+  flex-grow: 1;
+
+  padding-top: 80px;
+}

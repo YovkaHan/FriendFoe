@@ -48,9 +48,9 @@ app.use(expressWinston.logger({
 }));
 
 // Now we can tell the app to use our routing code:
-app.use('api/fractions', fractionsRoute);
-app.use('api/relations', relationsRoute);
-app.use('api/unions', unionsRoute);
+app.use('/api/fractions', fractionsRoute);
+app.use('/api/relations', relationsRoute);
+app.use('/api/unions', unionsRoute);
 
 // express-winston errorLogger makes sense AFTER the router.
 app.use(expressWinston.errorLogger({
