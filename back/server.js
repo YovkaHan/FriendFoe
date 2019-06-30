@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 const fractionsRoute = require('./api/fractions');
 const relationsRoute = require('./api/relations');
 const unionsRoute = require('./api/unions');
+const configsRoute = require('./api/configs');
 
 // Debug tools
 const winston = require('winston'); // for transports.Console
@@ -51,6 +52,7 @@ app.use(expressWinston.logger({
 app.use('/api/fractions', fractionsRoute);
 app.use('/api/relations', relationsRoute);
 app.use('/api/unions', unionsRoute);
+app.use('/api/configs', configsRoute);
 
 // express-winston errorLogger makes sense AFTER the router.
 app.use(expressWinston.errorLogger({

@@ -33,15 +33,15 @@ export default class App extends React.Component {
                 <Header visible={headerIsVisible}/>
                 <Route
                     exact path="/"
-                    render={props => <Home {...props} onInit={()=>this.switchPage('home')}/>}
+                    render={props => <Home {...props} pcb={this.pcb} onInit={()=>this.switchPage('home')}/>}
                 />
                 <Route
                     exact path="/main"
-                    render={props => <Main {...props} onInit={()=>this.switchPage('main')}/>}
+                    render={props => <Main {...props} pcb={this.pcb} onInit={()=>this.switchPage('main')}/>}
                 />
                 <Route
                     exact path="/edit"
-                    render={props => <Edit {...props} onInit={()=>this.switchPage('edit')}/>}
+                    render={props => <Edit {...props} pcb={this.pcb} onInit={()=>this.switchPage('edit')}/>}
                 />
                 <Footer visible={footerIsVisible}/>
             </div>
