@@ -1,9 +1,9 @@
 import {select, takeEvery, put, take, call} from 'redux-saga/effects'
 import * as R from "ramda";
-import {dataDownload} from '../../../../common/lib';
 import {TYPES, name} from "./types";
 import {INIT_STATE_ITEM} from './reducer';
 import {componentName} from '../';
+import {dataDownload} from "../../../../common/lib";
 
 const idMake = (index) => name + index;
 
@@ -11,7 +11,7 @@ export default [
     takeEvery(TYPES.FLAGS, flagHandleComplete),
     takeEvery(TYPES.ITEM_CREATE, createItemHandle),
     takeEvery(TYPES.ITEM_DELETE, deleteItemHandle),
-    takeEvery(TYPES.DATA_DOWNLOAD, dataDownloadHandle)
+    takeEvery(TYPES.UPDATE_META, updateMetaInfoHandle)
 ];
 
 
@@ -48,9 +48,23 @@ function* flagHandleComplete({type, payload, id}) {
     yield put({type: TYPES.FLAGS_COMPLETE, payload: _object.flags, id});
 }
 
-function* dataDownloadHandle({id, payload}) {
-    yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: true}, id});
-    const data = yield call(dataDownload, payload);
-    yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: false}, id});
-    yield put({type: TYPES.CHANGE, payload: {key: 'data', value: data}, id});
+function* updateMetaInfoHandle({payload, id}) {
+    const pcb = payload;
+    const state = yield select();
+    const {App} = pcb.relations;
+
+    const appObject = R.clone(state.Components[App.component][App.id]);
+    const resultPayload = {
+        relations: [],
+        fractions: []
+    };
+    const relationObject = R.path(['configs', 'entities'], appObject).find(item => item.id === 'relation');
+    const fractionObject = R.path(['configs', 'entities'], appObject).find(item => item.id === 'fraction');
+
+    if(relationObject !== undefined){
+        resultPayload.relations = yield call(dataDownload, relationObject.api);
+        resultPayload.fractions = yield call(dataDownload, fractionObject.api);
+    }
+
+    yield put({type: TYPES.UPDATE_META_COMPLETE, payload: resultPayload, id});
 }

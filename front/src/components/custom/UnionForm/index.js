@@ -1,12 +1,12 @@
 import React from 'react';
-import EntityList from './EntityList';
+import UnionForm from './UnionForm';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import actions, {createItem} from './redux/actions';
 
-import './EntityList.scss';
+import './UnionForm.scss';
 
-export const componentName = 'EntityList';
+export const componentName = 'UnionForm';
 
 class Component extends React.Component {
     constructor(props) {
@@ -26,7 +26,7 @@ class Component extends React.Component {
         const {template, pcb, relations} = this.props.core;
         return (
             this.state.created ?
-                <EntityList {...this.props} pcbMade={pcb.make(this.state._id, template, relations)}/> : null
+                <UnionForm {...this.props} pcbMade={pcb.make(this.state._id, template, relations)}/> : null
         )
     }
 }

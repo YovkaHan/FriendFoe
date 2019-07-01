@@ -1,6 +1,5 @@
 import {select, takeEvery, put, take, call} from 'redux-saga/effects'
 import * as R from "ramda";
-import {dataDownload} from '../../../../common/lib';
 import {TYPES, name} from "./types";
 import {INIT_STATE_ITEM} from './reducer';
 import {componentName} from '../';
@@ -11,7 +10,6 @@ export default [
     takeEvery(TYPES.FLAGS, flagHandleComplete),
     takeEvery(TYPES.ITEM_CREATE, createItemHandle),
     takeEvery(TYPES.ITEM_DELETE, deleteItemHandle),
-    takeEvery(TYPES.DATA_DOWNLOAD, dataDownloadHandle)
 ];
 
 
@@ -46,11 +44,4 @@ function* flagHandleComplete({type, payload, id}) {
     }
 
     yield put({type: TYPES.FLAGS_COMPLETE, payload: _object.flags, id});
-}
-
-function* dataDownloadHandle({id, payload}) {
-    yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: true}, id});
-    const data = yield call(dataDownload, payload);
-    yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: false}, id});
-    yield put({type: TYPES.CHANGE, payload: {key: 'data', value: data}, id});
 }

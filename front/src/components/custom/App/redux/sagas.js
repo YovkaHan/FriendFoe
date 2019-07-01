@@ -1,9 +1,9 @@
 import {select, takeEvery, put, take, call} from 'redux-saga/effects'
 import * as R from "ramda";
-import {dataDownload} from '../../../../common/lib';
 import {TYPES, name} from "./types";
 import {INIT_STATE_ITEM} from './reducer';
 import {componentName} from '../';
+import {dataDownload} from '../../../../common/lib';
 
 const idMake = (index) => name + index;
 
@@ -11,7 +11,7 @@ export default [
     takeEvery(TYPES.FLAGS, flagHandleComplete),
     takeEvery(TYPES.ITEM_CREATE, createItemHandle),
     takeEvery(TYPES.ITEM_DELETE, deleteItemHandle),
-    takeEvery(TYPES.DATA_DOWNLOAD, dataDownloadHandle)
+    takeEvery(TYPES.ITEM_INIT, initItemHandle)
 ];
 
 
@@ -29,11 +29,11 @@ function* createItemHandle({id, payload}) {
     callback(_id);
 }
 
-function* deleteItemHandle({type, id}) {
+function* deleteItemHandle({id}) {
     yield put({type: TYPES.ITEM_DELETE_COMPLETE, id});
 }
 
-function* flagHandleComplete({type, payload, id}) {
+function* flagHandleComplete({payload, id}) {
     const state = yield select();
 
     const _object = R.clone(state.Components[componentName][id]);
@@ -48,9 +48,10 @@ function* flagHandleComplete({type, payload, id}) {
     yield put({type: TYPES.FLAGS_COMPLETE, payload: _object.flags, id});
 }
 
-function* dataDownloadHandle({id, payload}) {
-    yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: true}, id});
-    const data = yield call(dataDownload, payload);
-    yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: false}, id});
-    yield put({type: TYPES.CHANGE, payload: {key: 'data', value: data}, id});
+function* initItemHandle({id}) {
+    const payload = {
+        configs: {}
+    };
+    payload.configs = yield call(dataDownload, '/api/configs');
+    yield put({type: TYPES.ITEM_INIT_COMPLETE, payload, id});
 }

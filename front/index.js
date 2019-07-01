@@ -12,9 +12,13 @@ import reducers from './src/redux/reducers';
 import rootSaga from './src/redux/sagas';
 
 import "./vendor/normalize.css";
+import {pcbGenerate} from './src/common/pcb';
+import {pcbTemplate} from './src/common/appConfig';
 
 const logger = createLogger({duration: true, diff: false});
 // const history = createHistory();
+
+const pcb = pcbGenerate(pcbTemplate);
 
 const findTypyes = (action) => {
     const types = [];
@@ -49,7 +53,7 @@ const rootElement = document.getElementById('root');
 ReactDOM.render(
     <Provider store={store}>
         <Router>
-            <App/>
+            <App.Component core={{pcb, id: 'app0'}}/>
         </Router>
     </Provider>,
     rootElement

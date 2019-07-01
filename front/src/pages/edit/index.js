@@ -2,7 +2,7 @@ import React from 'react';
 import * as R from "ramda";
 import {MdSearch, MdHome, MdKeyboardArrowRight} from 'react-icons/md';
 
-import {EntityList, List} from '../../components';
+import {EntityList, FractionForm, UnionForm} from '../../components';
 
 import './edit-page.scss';
 import {connect} from "react-redux";
@@ -10,7 +10,8 @@ import {connect} from "react-redux";
 
 class Edit extends React.Component {
     static defaultProps = {
-        entityName: 'Entity'
+        entityName: 'Entity',
+        entityData: {}
     };
 
     constructor(props) {
@@ -18,11 +19,21 @@ class Edit extends React.Component {
 
         this.state = {
             searchValue: '',
-            entity: '',
             isSidePanelOn: true,
             isChangeEntityOn: true,
             isCreationNewEntity: false
         };
+
+        this.madeChildren = {
+            EditFractionForm: null,
+            EditUnionForm: null
+        };
+        Object.keys(this.madeChildren).map(c=>{
+            const name = props.pcb.children[c].component;
+
+            this.madeChildren[c] = require('../../components')[name];
+            this.madeChildren[c].core = {pcb: props.pcb, ...props.pcb.children[c]};
+        });
 
         props.onInit();
     }
@@ -48,8 +59,9 @@ class Edit extends React.Component {
     };
 
     render() {
-        const {searchValue, entity, isSidePanelOn, isChangeEntityOn, isCreationNewEntity} = this.state;
-        const {pcb, entityName, entityApi} = this.props;
+        const {EditFractionForm, EditUnionForm} = this.madeChildren;
+        const {searchValue, isSidePanelOn, isChangeEntityOn, isCreationNewEntity} = this.state;
+        const {pcb, entityName, entityApi, entityData} = this.props;
 
         return (
             <section className={'the-app__page edit-page'}>
@@ -115,13 +127,27 @@ class Edit extends React.Component {
                         }
                         <div className={`side-panel__footer ${isChangeEntityOn ? 'side-panel__footer--hidden' : ''}`}>
                             <button className={'side-panel__create'} onClick={this.handleToggleNewEntity}>
-                                {`create new ${entity}`}
+                                {`create new ${entityName}`}
                             </button>
                         </div>
                     </div>
                 </div>
                 <main className={'edit-page__section entity-block'}>
                     <div className={'entity-block__name'}>{`${isCreationNewEntity ? 'new' : ''} ${entityName}`}</div>
+                    {
+                        entityName !== 'fraction' || (!isCreationNewEntity && !entityData._id) ? null :
+                            <EditFractionForm.Component
+                                core={EditFractionForm.core}
+                                data={isCreationNewEntity ? {} : entityData}
+                            />
+                    }
+                    {
+                        entityName !== 'union' || (!isCreationNewEntity && !entityData._id) ? null :
+                            <EditUnionForm.Component
+                                core={EditUnionForm.core}
+                                data={isCreationNewEntity ? {} : entityData}
+                            />
+                    }
                 </main>
             </section>
         )
@@ -131,7 +157,8 @@ class Edit extends React.Component {
 const mapStateToProps = (state, props) => {
     return {
         entityName: R.path(['EntityList', 'eL0', 'value', 'name'], state.Components),
-        entityApi: R.path(['EntityList', 'eL0', 'value', 'api'], state.Components)
+        entityApi: R.path(['EntityList', 'eL0', 'value', 'api'], state.Components),
+        entityData: R.path(['EntityList', 'eL1', 'value'], state.Components),
     }
 };
 

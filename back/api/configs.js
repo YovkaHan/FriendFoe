@@ -14,11 +14,17 @@ const configs = {
             id: 'union',
             name: 'union',
             api: '/api/unions'
+        },
+        {
+            id: 'relation',
+            name: 'relation',
+            api: '/api/relations'
         }
     ],
     fields: {
         'fraction': constructField(models.Fraction.schema),
-        'union': constructField(models.Union.schema)
+        'union': constructField(models.Union.schema),
+        'relation': constructField(models.Relation.schema)
     }
 };
 

@@ -1,0 +1,23 @@
+.c-form--fraction {
+  display: inline-flex;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & * {
+    transition: 0.5s all ease;
+  }
+
+  &:hover {
+
+    .c-button {
+
+     &__value {
+       color: gray;
+     }
+    }
+  }
+}

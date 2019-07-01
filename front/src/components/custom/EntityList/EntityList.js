@@ -28,28 +28,14 @@ class EntityList extends React.Component {
     static defaultProps = {
         className: '',
         rootClass: '',
-        value: 'On',
-        disabled: false,
-        click: ()=>{}
+        value: {}
     };
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            width: 200
-        };
         props.dataDownload(props.api);
-
-        this.handleClick = ::this.handleClick;
     }
-
-    async handleClick(e) {
-        if(!this.props.disabled){
-            await this.props.defaultClick(e);
-            await this.props.click(e);
-        }
-    };
 
     handleChooseItem = (item) => {
         this.props.chooseItem(item);
@@ -58,14 +44,11 @@ class EntityList extends React.Component {
     render() {
         const {props, state, handleClick} = this;
         const {value, className, rootClass, disabled, listData} = props;
-        const {width} = state;
         const mainClass = 'c-entity-list';
-
-        console.log(props.pcbMade.id);
 
         return (
             <div
-                className={`${mainClass} ${disabled ? mainClass+'--disabled' : ''} ${className} ${rootClass} ${disabled ? rootClass+'--disabled' : ''}`.trim()}
+                className={`${mainClass} ${className} ${rootClass}`.trim()}
                 onClick={handleClick}
             >
                 <div className={innerClass('content', mainClass, rootClass)}>
@@ -89,8 +72,7 @@ class EntityList extends React.Component {
 EntityList.propTypes = {
     className: PropTypes.string,
     rootClass: PropTypes.string,
-    value: PropTypes.string,
-    disabled: PropTypes.bool,
+    value: PropTypes.object,
     pcb: PropTypes.object
 };
 
@@ -113,9 +95,6 @@ const mapDispatchers = (dispatch, props) => {
     const cId = props.pcbMade.id;
 
     return bindActionCreators({
-        defaultClick: (e) => flagHandle(cId, 'toggle', e.target.value),
-        // mouseOver: () => flagHandle(cId, 'hover', true),
-        // mouseOut: () => flagHandle(cId, 'hover', false),
         valueChange: (value) => valueChange(cId, value),
         deleteComponent: () => deleteItem(cId),
         dataDownload: (api) => dataDownload(cId, api !== undefined ? api : R.path(['props','api'], props.pcbMade)),

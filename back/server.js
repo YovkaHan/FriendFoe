@@ -27,7 +27,9 @@ const db = mongoURI;
 // Connect to Mongo
 mongoose
     .connect(db, { useNewUrlParser: true })
-    .then(()=> console.log('Mongo DB connected'))
+    .then(()=> {
+        console.log('Mongo DB connected');
+    })
     .catch(err => console.error(err));
 
 app.use(cors({credentials: true, origin: true}));

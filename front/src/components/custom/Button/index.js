@@ -14,9 +14,11 @@ class Component extends React.Component {
         this.state = {
             created: false
         };
+    }
 
-        props.createItem(props.core.id, (_id) => {
-            this.state = {...this.state, created: true, _id};
+    componentDidMount(){
+        this.props.createItem(this.props.core.id, (_id)=>{
+            this.setState({created: true, _id});
         });
     }
 
