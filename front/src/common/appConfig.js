@@ -4,7 +4,8 @@ export const pcbTemplate = {
             component: 'App',
             children: [
                 {alias: 'EditFractionForm', id: 'fF0'},
-                {alias: 'EditUnionForm', id: 'uF0'}
+                {alias: 'EditUnionForm', id: 'uF0'},
+                {alias: 'EditRelationForm', id: 'rF0'}
             ]
         },
         b0: {component: 'Button'},
@@ -35,6 +36,15 @@ export const pcbTemplate = {
                 }
             }
         },
+        rF0: {
+            component: 'RelationForm',
+            relations: {
+                App: {
+                    id: 'app0',
+                    component: 'App',
+                }
+            }
+        },
     },
     templateList: {
         Button0: {
@@ -45,6 +55,6 @@ export const pcbTemplate = {
         },
         UnionForm0: {
             component: 'UnionForm'
-        }
+        },
     }
 };

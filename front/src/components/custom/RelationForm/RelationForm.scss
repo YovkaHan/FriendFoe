@@ -1,0 +1,21 @@
+.c-form--relation {
+  &__content {
+    display: flex;
+    height: 100%;
+    width: 100%;
+  }
+
+  & * {
+    transition: 0.5s all ease;
+  }
+
+  &:hover {
+
+    .c-button {
+
+     &__value {
+       color: gray;
+     }
+    }
+  }
+}

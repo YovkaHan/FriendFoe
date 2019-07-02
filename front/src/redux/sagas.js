@@ -5,6 +5,7 @@ import Button from '../components/custom/Button/redux/sagas';
 import EntityList from '../components/custom/EntityList/redux/sagas';
 import FractionForm from '../components/custom/FractionForm/redux/sagas';
 import UnionForm from '../components/custom/UnionForm/redux/sagas';
+import RelationForm from '../components/custom/RelationForm/redux/sagas';
 
 export default function* rootSaga() {
     const sagas = [
@@ -12,7 +13,8 @@ export default function* rootSaga() {
         ...Button,
         ...EntityList,
         ...FractionForm,
-        ...UnionForm
+        ...UnionForm,
+        ...RelationForm
     ];
 
     yield all(sagas)

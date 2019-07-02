@@ -27,42 +27,27 @@ class FractionForm extends React.Component {
         this.state = {
             addNewRelation: false,
             newFormFlag: false,
-            name:       '',
-            icon:       '',
-            amount:     '',
-            relations:  ''
+            name: '',
+            icon: '',
+            amount: '',
+            relations: ''
         };
 
         props.data !== undefined ? props.formInit(props.data) : {};
     }
 
-    static getDerivedStateFromProps(props, state){
-        const propsName =   props.bufferData.hasOwnProperty('name')? props.bufferData.name : props.formData.name;
-        const propsIcon =   props.bufferData.hasOwnProperty('icon')? props.bufferData.icon : props.formData.icon;
-        const propsAmount = props.bufferData.hasOwnProperty('amount')? props.bufferData.amount : props.formData.amount;
-        const propsRelations = props.bufferData.hasOwnProperty('relations')? props.bufferData.relations : props.formData.relations;
-
-        const newFormFlag = () => {
-            if(props.data.hasOwnProperty('_id') && props.data._id !== props.formData._id){
-                props.formInit(props.data);
-                props.updateMeta(props.pcbMade);
-                return false;
-            }
-            if(!Object.keys(props.data).length && !state.newFormFlag){
-                props.formInit(props.data);
-                props.updateMeta(props.pcbMade);
-                return true;
-            }
-            return state.newFormFlag;
-        };
+    static getDerivedStateFromProps(props, state) {
+        const propsName = props.bufferData.hasOwnProperty('name') ? props.bufferData.name : props.formData.name;
+        const propsIcon = props.bufferData.hasOwnProperty('icon') ? props.bufferData.icon : props.formData.icon;
+        const propsAmount = props.bufferData.hasOwnProperty('amount') ? props.bufferData.amount : props.formData.amount;
+        const propsRelations = props.bufferData.hasOwnProperty('relations') ? props.bufferData.relations : props.formData.relations;
 
         return {
             ...state,
-            newFormFlag: newFormFlag(),
-            name:       propsName !== undefined ? propsName : `${R.path(['name', 'default'], props.formFields) !== undefined ? props.formFields.name.default : ''}`,
-            icon:       propsIcon !== undefined ? propsIcon : `${R.path(['icon', 'default'], props.formFields) !== undefined ? props.formFields.icon.default : ''}`,
-            amount:     propsAmount !== undefined ? propsAmount : `${R.path(['amount', 'default'], props.formFields) !== undefined ? props.formFields.amount.default : ''}`,
-            relations:  propsRelations !== undefined ? propsRelations : `${R.path(['relations', 'default'], props.formFields) !== undefined ? props.formFields.relations.default : ''}`,
+            name: propsName !== undefined ? propsName : `${R.path(['name', 'default'], props.formFields) !== undefined ? props.formFields.name.default : ''}`,
+            icon: propsIcon !== undefined ? propsIcon : `${R.path(['icon', 'default'], props.formFields) !== undefined ? props.formFields.icon.default : ''}`,
+            amount: propsAmount !== undefined ? propsAmount : `${R.path(['amount', 'default'], props.formFields) !== undefined ? props.formFields.amount.default : ''}`,
+            relations: propsRelations !== undefined ? propsRelations : `${R.path(['relations', 'default'], props.formFields) !== undefined ? props.formFields.relations.default : ''}`,
         }
     }
 
@@ -81,12 +66,30 @@ class FractionForm extends React.Component {
         });
     };
 
+    componentDidUpdate(){
+        if (this.props.data.hasOwnProperty('_id') && this.props.data._id !== this.props.formData._id) {
+            this.props.formInit(this.props.data);
+            this.props.updateMeta(this.props.pcbMade);
+            this.setState({
+                newFormFlag: false
+            });
+        }
+        if (!Object.keys(this.props.data).length && !this.state.newFormFlag) {
+            this.props.formInit(this.props.data);
+            this.props.updateMeta(this.props.pcbMade);
+            this.setState({
+                newFormFlag: true
+            });
+        }
+    }
+
     render() {
         const {props, state, handleClick} = this;
         const {className, rootClass, formFields, metaData} = props;
         const {name, icon, amount, relations, addNewRelation} = state;
         const mainClass = 'c-form--fraction';
 
+        console.log('RENDER');
         return (
             <div
                 className={`${mainClass} ${className} ${rootClass}`.trim()}
@@ -128,7 +131,7 @@ class FractionForm extends React.Component {
         )
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.props.deleteComponent()
     }
 }
@@ -146,9 +149,9 @@ FractionForm.propTypes = {
 const mapStateToProps = (state, props) => {
     const cId = props.pcbMade.id;
     const _object = state.Components.FractionForm[cId];
-    const app =  state.Components.App[props.pcbMade.relations.App.id];
+    const app = state.Components.App[props.pcbMade.relations.App.id];
 
-    if(_object) {
+    if (_object) {
         return ({
             flags: _object.flags,
             formFields: R.path(['configs', 'fields', 'fraction'], app),
@@ -174,7 +177,7 @@ const mapDispatchers = (dispatch, props) => {
 
 export default connect(mapStateToProps, mapDispatchers)(FractionForm);
 
-function RelationBlock({formFields, metaData, relations, addNewRelation, handleToggleAddNewRelation}) {
+function RelationBlock({formData, formFields, metaData, relations, addNewRelation, handleToggleAddNewRelation}) {
     const relationItem = (item) => metaData.hasOwnProperty('relations') ? metaData.relations.find(r => r._id === item._id) : undefined;
     const fractionItem = (id) => metaData.hasOwnProperty('fractions') ? metaData.fractions.find(r => r._id === id) : undefined;
 
@@ -185,7 +188,8 @@ function RelationBlock({formFields, metaData, relations, addNewRelation, handleT
                 <div className={`form-block_box__item`}>
                     <div className={'relation__add'} onClick={handleToggleAddNewRelation}>
                         {
-                            addNewRelation ? <MdCheckCircle className={'icon'} /> : <MdAddCircleOutline className={'icon'}/>
+                            addNewRelation ? <MdCheckCircle className={'icon'}/> :
+                                <MdAddCircleOutline className={'icon'}/>
                         }
                     </div>
                     <select className={`form-block__input`}>
@@ -199,9 +203,12 @@ function RelationBlock({formFields, metaData, relations, addNewRelation, handleT
                     <select className={`form-block__input`}>
                         {
                             metaData.hasOwnProperty('fractions') ?
-                                metaData.fractions.map(item =>
-                                    (<option key={item._id} value={item._id}>{item.name}</option>)
-                                ) : null
+                                metaData.fractions.map(item => {
+                                    if(formData.hasOwnProperty('_id') && formData._id === item._id){
+                                        return null;
+                                    }
+                                    return <option key={item._id} value={item._id}>{item.name}</option>;
+                                }) : null
                         }
                     </select>
                 </div>

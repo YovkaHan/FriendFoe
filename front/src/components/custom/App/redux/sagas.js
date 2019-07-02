@@ -3,7 +3,7 @@ import * as R from "ramda";
 import {TYPES, name} from "./types";
 import {INIT_STATE_ITEM} from './reducer';
 import {componentName} from '../';
-import {dataDownload} from '../../../../common/lib';
+import {getData} from '../../../../common/lib';
 
 const idMake = (index) => name + index;
 
@@ -52,6 +52,6 @@ function* initItemHandle({id}) {
     const payload = {
         configs: {}
     };
-    payload.configs = yield call(dataDownload, '/api/configs');
+    payload.configs = yield call(getData, '/api/configs');
     yield put({type: TYPES.ITEM_INIT_COMPLETE, payload, id});
 }

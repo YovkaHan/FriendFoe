@@ -10,11 +10,15 @@ const INIT_STATE = {
 export const INIT_STATE_ITEM = {
     flags: {
         toggle: false,
-        loading: false,
-        hover: false
+        hover: false,
+        transaction: false
     },
-    value: undefined,
-    data: []
+    data: {
+        name: undefined,
+        color: undefined
+    },
+    buffer: {},
+    transactionResult: {}
 };
 
 const cases = (type) => {
@@ -53,13 +57,45 @@ const cases = (type) => {
                 });
             };
         }
-        case TYPES.CHOOSE_ITEM: {
+        case TYPES.CHANGE_FIELD: {
             return (draft, payload, id) => {
-                let itemToChoose = payload.item !== undefined ? payload.item : R.path(['_id'], draft[id].value);
-                if(itemToChoose){
-                    const itemFind = draft[id].data.find(item => item._id === itemToChoose);
-                    draft[id].value =  itemToChoose ? R.clone(itemFind): {};
+                draft[id].buffer[payload.key] = payload.value
+            };
+        }
+        case TYPES.FORM_INIT: {
+            return (draft, payload, id) => {
+                draft[id].buffer = {};
+                draft[id].data = R.clone(payload);
+            };
+        }
+        case TYPES.FORM_ITEM_APPLY: {
+            return (draft, payload, id) => {
+                draft[id].flags.transaction = true;
+            };
+        }
+        case TYPES.FORM_ITEM_APPLY_COMPLETE: {
+            return (draft, payload, id) => {
+                draft[id].transactionResult = payload;
+                draft[id].flags.transaction = false;
+                if(!payload.hasOwnProperty('errors')){
+                    draft[id].buffer = {};
                 }
+            };
+        }
+        case TYPES.FORM_ITEM_DELETE: {
+            return (draft, payload, id) => {
+                draft[id].flags.transaction = true;
+            };
+        }
+        case TYPES.FORM_ITEM_DELETE_COMPLETE: {
+            return (draft, payload, id) => {
+                draft[id].transactionResult = payload;
+                draft[id].flags.transaction = false;
+            };
+        }
+        case TYPES.FORM_DATA_COPY: {
+            return (draft, payload, id) => {
+                draft[id].buffer = draft[id].data
             };
         }
         default : {

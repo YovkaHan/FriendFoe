@@ -28,22 +28,45 @@ class EntityList extends React.Component {
     static defaultProps = {
         className: '',
         rootClass: '',
-        value: {}
+        value: {},
+        chosenItem: null,
+        clearItem: ()=>{},
+        update: ()=>{}
     };
 
     constructor(props) {
         super(props);
 
         props.dataDownload(props.api);
+        if(props.chosenItem){
+            this.props.chooseItem(props.chosenItem)
+        }
+
+        props.clearItem(()=>{
+            props.valueChange({});
+            props.dataDownload(props.api);
+        });
+
+        props.update(this.handleUpdate)
     }
 
     handleChooseItem = (item) => {
-        this.props.chooseItem(item);
+        this.props.chooseItem(item._id);
     };
 
+    handleUpdate = () => {
+        this.props.dataDownload(this.props.api);
+    };
+
+    componentDidUpdate(prevProps){
+        if(!this.props.loadingFlag && prevProps.loadingFlag !== this.props.loadingFlag){
+            this.props.chooseItem(this.props.chosenItem)
+        }
+    }
+
     render() {
-        const {props, state, handleClick} = this;
-        const {value, className, rootClass, disabled, listData} = props;
+        const {props, handleClick} = this;
+        const {className, rootClass, listData} = props;
         const mainClass = 'c-entity-list';
 
         return (
@@ -83,6 +106,7 @@ const mapStateToProps = (state, props) => {
     if(_object) {
         return ({
             flags: _object.flags,
+            loadingFlag: _object.flags.loading,
             value: props.value ? props.value : _object.value,
             listData: _object.data
         })

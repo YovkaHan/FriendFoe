@@ -6,17 +6,17 @@ const models = require('../models');
 const configs = {
     entities: [
         {
-            id: 'fraction',
+            _id: 'fraction',
             name: 'fraction',
             api: '/api/fractions'
         },
         {
-            id: 'union',
+            _id: 'union',
             name: 'union',
             api: '/api/unions'
         },
         {
-            id: 'relation',
+            _id: 'relation',
             name: 'relation',
             api: '/api/relations'
         }

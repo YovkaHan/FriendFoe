@@ -21,12 +21,14 @@ class Edit extends React.Component {
             searchValue: '',
             isSidePanelOn: true,
             isChangeEntityOn: true,
-            isCreationNewEntity: false
+            isCreationNewEntity: false,
+            chosenItem: null,
         };
 
         this.madeChildren = {
             EditFractionForm: null,
-            EditUnionForm: null
+            EditUnionForm: null,
+            EditRelationForm: null
         };
         Object.keys(this.madeChildren).map(c=>{
             const name = props.pcb.children[c].component;
@@ -51,16 +53,38 @@ class Edit extends React.Component {
     };
 
     handleToggleNewEntity = () => {
-        this.setState({isCreationNewEntity: !this.state.isCreationNewEntity});
+        this.setState({isCreationNewEntity: !this.state.isCreationNewEntity, chosenItem: null}, ()=>{
+            if(!this.state.isCreationNewEntity){
+                this.clearChosenItem();
+            }
+        });
     };
 
     onSearch = (e) => {
         this.setState({searchValue: e.target.value})
     };
 
+    clearChosenItem = (foo) => this.clearChosenItem = foo;
+
+    updateList = (foo) => this.updateList = foo;
+
+    quitItem = () => {
+        this.clearChosenItem();
+        this.setState({
+            isCreationNewEntity: false
+        });
+    };
+
+    goToItem = (item) => {
+        this.setState({
+            chosenItem: item,
+            isCreationNewEntity: false
+        }, this.updateList);
+    };
+
     render() {
-        const {EditFractionForm, EditUnionForm} = this.madeChildren;
-        const {searchValue, isSidePanelOn, isChangeEntityOn, isCreationNewEntity} = this.state;
+        const {EditFractionForm, EditUnionForm, EditRelationForm} = this.madeChildren;
+        const {searchValue, isSidePanelOn, isChangeEntityOn, isCreationNewEntity, chosenItem} = this.state;
         const {pcb, entityName, entityApi, entityData} = this.props;
 
         return (
@@ -123,6 +147,9 @@ class Edit extends React.Component {
                                     core={{pcb, id: 'eL1'}}
                                     className={`side-panel__list`}
                                     api={entityApi}
+                                    chosenItem={chosenItem}
+                                    clearItem={this.clearChosenItem}
+                                    update={this.updateList}
                                 />
                         }
                         <div className={`side-panel__footer ${isChangeEntityOn ? 'side-panel__footer--hidden' : ''}`}>
@@ -139,6 +166,7 @@ class Edit extends React.Component {
                             <EditFractionForm.Component
                                 core={EditFractionForm.core}
                                 data={isCreationNewEntity ? {} : entityData}
+                                rootClass={'c-form'}
                             />
                     }
                     {
@@ -146,6 +174,17 @@ class Edit extends React.Component {
                             <EditUnionForm.Component
                                 core={EditUnionForm.core}
                                 data={isCreationNewEntity ? {} : entityData}
+                                rootClass={'c-form'}
+                            />
+                    }
+                    {
+                        entityName !== 'relation' || (!isCreationNewEntity && !entityData._id) ? null :
+                            <EditRelationForm.Component
+                                core={EditRelationForm.core}
+                                data={isCreationNewEntity ? {} : entityData}
+                                rootClass={'c-form'}
+                                quitItem={this.quitItem}
+                                goToItem={this.goToItem}
                             />
                     }
                 </main>

@@ -3,6 +3,7 @@ import Button from '../components/custom/Button/redux/reducer';
 import EntityList from '../components/custom/EntityList/redux/reducer';
 import FractionForm from '../components/custom/FractionForm/redux/reducer';
 import UnionForm from '../components/custom/UnionForm/redux/reducer';
+import RelationForm from '../components/custom/RelationForm/redux/reducer';
 import {combineReducers} from 'redux';
 
 export default {
@@ -11,6 +12,7 @@ export default {
         Button: Button(),
         EntityList: EntityList(),
         FractionForm: FractionForm(),
-        UnionForm: UnionForm()
+        UnionForm: UnionForm(),
+        RelationForm: RelationForm()
     })
 };
