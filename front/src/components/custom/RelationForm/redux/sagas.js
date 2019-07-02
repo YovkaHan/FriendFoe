@@ -56,7 +56,7 @@ function* cancelEntityItemHandle({id}) {
 
 function* applyEntityItemHandle({payload, id}) {
     const state = yield select();
-    const {pcb} = payload;
+    const {pcb, _id} = payload;
     const {App} = pcb.relations;
 
     const appObject = R.clone(state.Components[App.component][App.id]);
@@ -65,8 +65,8 @@ function* applyEntityItemHandle({payload, id}) {
     const relationObject = R.path(['configs', 'entities'], appObject).find(item => item._id === 'relation');
     let transactionResult = {};
 
-    if(componentObject.data.hasOwnProperty('_id')){
-        transactionResult = yield call(putData, `${relationObject.api}/${componentObject.data._id}`, componentObject.buffer);
+    if(_id){
+        transactionResult = yield call(putData, `${relationObject.api}/${_id}`, componentObject.buffer);
     }else {
         transactionResult = yield call(postData, relationObject.api, componentObject.buffer);
     }
@@ -76,15 +76,14 @@ function* applyEntityItemHandle({payload, id}) {
 
 function* deleteEntityItemHandle({payload, id}) {
     const state = yield select();
-    const {pcb} = payload;
+    const {pcb, _id} = payload;
     const {App} = pcb.relations;
 
     const appObject = R.clone(state.Components[App.component][App.id]);
-    const componentObject = R.clone(state.Components[componentName][id]);
 
     const relationObject = R.path(['configs', 'entities'], appObject).find(item => item._id === 'relation');
 
-    const transactionResult = yield call(deleteData, `${relationObject.api}/${componentObject.data._id}`);
+    const transactionResult = yield call(deleteData, `${relationObject.api}/${_id}`);
 
     yield put({type: TYPES.FORM_ITEM_DELETE_COMPLETE, payload: transactionResult, id});
 }

@@ -13,10 +13,6 @@ export const INIT_STATE_ITEM = {
         hover: false,
         transaction: false
     },
-    data: {
-        name: undefined,
-        color: undefined
-    },
     buffer: {},
     transactionResult: {}
 };
@@ -64,8 +60,7 @@ const cases = (type) => {
         }
         case TYPES.FORM_INIT: {
             return (draft, payload, id) => {
-                draft[id].buffer = {};
-                draft[id].data = R.clone(payload);
+                draft[id].buffer = payload !== undefined ? R.clone(payload) : {};
             };
         }
         case TYPES.FORM_ITEM_APPLY: {

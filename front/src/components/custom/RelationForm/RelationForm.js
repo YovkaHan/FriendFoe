@@ -25,10 +25,10 @@ class RelationForm extends React.Component {
         className: '',
         rootClass: '',
         formFields: {},
-        data: undefined,
-        formData: {},
+        data: {},
         bufferData: {},
-        quitItem: ()=>{}
+        quitItem: () => {
+        }
     };
 
     constructor(props) {
@@ -43,12 +43,16 @@ class RelationForm extends React.Component {
             color: ''
         };
 
-        props.data !== undefined ? props.formInit(props.data) : {};
+        if (!props.data.hasOwnProperty('_id'))
+            props.formInit({
+                name: `${R.path(['name', 'default'], props.formFields) !== undefined ? props.formFields.name.default : ''}`,
+                color: `${R.path(['color', 'default'], props.formFields) !== undefined ? props.formFields.color.default : ''}`
+            });
     }
 
     static getDerivedStateFromProps(props, state) {
-        const propsName = props.bufferData.hasOwnProperty('name') ? props.bufferData.name : props.formData.name;
-        const propsIcon = props.bufferData.hasOwnProperty('color') ? props.bufferData.color : props.formData.color;
+        const propsName = props.bufferData.hasOwnProperty('name') ? props.bufferData.name : props.data.name;
+        const propsIcon = props.bufferData.hasOwnProperty('color') ? props.bufferData.color : props.data.color;
 
         return {
             ...state,
@@ -64,20 +68,20 @@ class RelationForm extends React.Component {
         this.props.changeField('color', e.target.value);
     };
     handleDeleteItem = () => {
-        this.props.deleteItem();
+        this.props.deleteItem(this.props.data._id);
         this.setState({deleting: true});
     };
     handleApplyItem = () => {
-        this.props.applyItem();
+        this.props.applyItem(this.props.data._id);
         this.setState({applying: true});
     };
     handleCancelItem = () => {
         this.props.cancelItem();
     };
 
-    componentDidUpdate(){
-        if (this.props.data.hasOwnProperty('_id') && JSON.stringify(this.props.data) !== JSON.stringify(this.props.formData)) {
-            this.props.formInit(this.props.data);
+    componentDidUpdate(prevProps) {
+        if (this.props.data.hasOwnProperty('_id') && R.path(['_id'], prevProps.data) !== this.props.data._id) {
+            this.props.formInit();
             this.setState({
                 newFormFlag: false
             });
@@ -89,20 +93,18 @@ class RelationForm extends React.Component {
             });
             this.setState({
                 newFormFlag: true
-            }, ()=>{
-                this.props.copyDataToBuffer();
             });
         }
-        if(this.state.deleting && !this.props.transactionFlag){
-            this.setState({deleting: false}, ()=> {
-                if(!this.props.transactionResult.hasOwnProperty('errors')){
+        if (this.state.deleting && !this.props.transactionFlag) {
+            this.setState({deleting: false}, () => {
+                if (!this.props.transactionResult.hasOwnProperty('errors')) {
                     this.props.quitItem();
                 }
             });
         }
-        if(this.state.applying && !this.props.transactionFlag){
-            this.setState({applying: false}, ()=> {
-                if(!this.props.transactionResult.hasOwnProperty('errors')){
+        if (this.state.applying && !this.props.transactionFlag) {
+            this.setState({applying: false}, () => {
+                if (!this.props.transactionResult.hasOwnProperty('errors')) {
                     this.props.goToItem(this.props.data.hasOwnProperty('_id') ? this.props.data._id : this.props.transactionResult._id);
                 }
             });
@@ -142,16 +144,19 @@ class RelationForm extends React.Component {
                     <div className={`c-form__footer`}>
                         <button
                             className={`c-form__button c-form__button--delete`}
-                            onClick={this.handleDeleteItem}>Delete</button>
-                       <div>
-                           <button
-                               className={`c-form__button c-form__button--ok`}
-                               onClick={this.handleApplyItem}>Ok</button>
-                           <button
-                               disabled={!someChanges}
-                               className={`c-form__button c-form__button--cancel ${someChanges ? '':'disabled'}`.trim()}
-                               onClick={this.handleCancelItem}>Cancel</button>
-                       </div>
+                            onClick={this.handleDeleteItem}>Delete
+                        </button>
+                        <div>
+                            <button
+                                className={`c-form__button c-form__button--ok`}
+                                onClick={this.handleApplyItem}>Ok
+                            </button>
+                            <button
+                                disabled={!someChanges}
+                                className={`c-form__button c-form__button--cancel ${someChanges ? '' : 'disabled'}`.trim()}
+                                onClick={this.handleCancelItem}>Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -168,7 +173,6 @@ RelationForm.propTypes = {
     rootClass: PropTypes.string,
     pcb: PropTypes.object,
     data: PropTypes.object,
-    formData: PropTypes.object,
     bufferData: PropTypes.object,
     formFields: PropTypes.object
 };
@@ -178,15 +182,12 @@ const mapStateToProps = (state, props) => {
     const _object = state.Components.RelationForm[cId];
     const app = state.Components.App[props.pcbMade.relations.App.id];
 
-    console.log(_object);
-
     if (_object) {
         return ({
             flags: _object.flags,
             transactionResult: _object.transactionResult,
             transactionFlag: _object.flags.transaction,
             formFields: R.path(['configs', 'fields', 'relation'], app),
-            formData: _object.data,
             bufferData: _object.buffer,
             metaData: _object.meta
         })
@@ -202,9 +203,9 @@ const mapDispatchers = (dispatch, props) => {
         deleteComponent: () => deleteItem(cId),
         changeField: (key, value) => changeField(cId, key, value),
         formInit: (data) => formInit(cId, data),
-        applyItem: () => applyEntityItem(cId, props.pcbMade),
+        applyItem: (itemId) => applyEntityItem(cId, props.pcbMade, itemId),
         cancelItem: () => cancelEntityItem(cId, props.pcbMade),
-        deleteItem: () => deleteEntityItem(cId, props.pcbMade),
+        deleteItem: (itemId) => deleteEntityItem(cId, props.pcbMade, itemId),
         copyDataToBuffer: () => copyDataToBuffer(cId)
     }, dispatch);
 };

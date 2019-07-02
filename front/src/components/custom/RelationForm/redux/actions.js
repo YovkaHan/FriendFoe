@@ -25,16 +25,16 @@ export function formInit(id, data) {
     return ({type: TYPES.FORM_INIT, id, payload: data})
 }
 
-export function applyEntityItem(id, pcb) {
-    return ({type: TYPES.FORM_ITEM_APPLY, id, payload: {pcb}})
+export function applyEntityItem(id, pcb, itemId) {
+    return ({type: TYPES.FORM_ITEM_APPLY, id, payload: {pcb, _id: itemId}})
 }
 
 export function cancelEntityItem(id) {
     return ({type: TYPES.FORM_ITEM_CANCEL, id})
 }
 
-export function deleteEntityItem(id, pcb) {
-    return ({type: TYPES.FORM_ITEM_DELETE, id, payload: {pcb}})
+export function deleteEntityItem(id, pcb, itemId) {
+    return ({type: TYPES.FORM_ITEM_DELETE, id, payload: {pcb, _id: itemId}})
 }
 
 export function copyDataToBuffer(id) {
