@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-const {Relation} = require('../models');
+const {CustomRelation} = require('../models');
 
 /**endpoints ...*/
 router.get('/', (req, res) => {
     if (req.params.id) {
-        Relation
+        CustomRelation
             .findById(req.params.id)
             .then(relation => res.json(relation))
             .catch(err => res.status(404).json({success: false}));
     } else {
-        Relation
+        CustomRelation
             .find()
             .sort({date: -1})
             .then(relations => res.json(relations))
@@ -20,24 +20,17 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res)=>{
-    const newItem = new Relation({
-        name: req.body.name,
-        color: req.body.color
+    const newItem = new CustomRelation({
+        relation: req.body.relation,
+        a: req.body.a
     });
 
     newItem.save().then(item => res.json(item)).catch(err => res.status(400).json(err));
 });
 
-router.put('/:id', (req, res)=>{
-    Relation
-        .update({_id: req.params.id},{$set: {...req.body}})
-        .then(relation => res.json(relation))
-        .catch(err => res.status(400).json(err));
-});
-
 router.delete('/:id', (req, res)=>{
     if (req.params.id) {
-        Relation
+        CustomRelation
             .remove({_id: req.params.id})
             .then(relation => res.json(relation.ok))
             .catch(err => res.status(400).json(err));

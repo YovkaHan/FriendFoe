@@ -19,12 +19,18 @@ const configs = {
             _id: 'relation',
             name: 'relation',
             api: '/api/relations'
+        },
+        {
+            _id: 'customRelation',
+            name: 'customRelation',
+            api: '/api/customRelation'
         }
     ],
     fields: {
         'fraction': constructField(models.Fraction.schema),
         'union': constructField(models.Union.schema),
-        'relation': constructField(models.Relation.schema)
+        'relation': constructField(models.Relation.schema),
+        'customRelation': constructField(models.CustomRelation.schema)
     }
 };
 

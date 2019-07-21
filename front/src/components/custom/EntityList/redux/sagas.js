@@ -48,7 +48,8 @@ function* flagHandleComplete({type, payload, id}) {
     yield put({type: TYPES.FLAGS_COMPLETE, payload: _object.flags, id});
 }
 
-function* dataDownloadHandle({id, payload}) {
+function* dataDownloadHandle(action) {
+    const {id, payload} = action;
     yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: true}, id});
     const data = yield call(getData, payload);
     yield put({type: TYPES.CHANGE, payload: {key: 'data', value: data}, id});

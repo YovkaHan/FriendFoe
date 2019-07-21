@@ -6,6 +6,11 @@ import {EntityList, FractionForm, UnionForm} from '../../components';
 
 import './edit-page.scss';
 import {connect} from "react-redux";
+import {
+    valueChange,
+    dataDownload
+} from "../../components/custom/EntityList/redux/actions";
+import {bindActionCreators} from "redux";
 
 
 class Edit extends React.Component {
@@ -27,14 +32,16 @@ class Edit extends React.Component {
 
         this.madeChildren = {
             EditFractionForm: null,
+            EditFractionFormNew: null,
             EditUnionForm: null,
             EditRelationForm: null
         };
-        Object.keys(this.madeChildren).map(c=>{
+        Object.keys(this.madeChildren).map(c => {
             const name = props.pcb.children[c].component;
+            const o = R.clone(require('../../components')[name]);
+            o.core = {pcb: props.pcb, ...props.pcb.children[c]};
 
-            this.madeChildren[c] = require('../../components')[name];
-            this.madeChildren[c].core = {pcb: props.pcb, ...props.pcb.children[c]};
+            this.madeChildren[c] = o;
         });
 
         props.onInit();
@@ -53,23 +60,16 @@ class Edit extends React.Component {
     };
 
     handleToggleNewEntity = () => {
-        this.setState({isCreationNewEntity: !this.state.isCreationNewEntity, chosenItem: null}, ()=>{
-            if(!this.state.isCreationNewEntity){
-                this.clearChosenItem();
-            }
-        });
+        this.setState({isCreationNewEntity: !this.state.isCreationNewEntity, chosenItem: null});
     };
 
     onSearch = (e) => {
         this.setState({searchValue: e.target.value})
     };
 
-    clearChosenItem = (foo) => this.clearChosenItem = foo;
-
-    updateList = (foo) => this.updateList = foo;
-
     quitItem = () => {
-        this.clearChosenItem();
+        this.props.clearListValue();
+        this.props.listDataDownload(this.props.entityApi);
         this.setState({
             isCreationNewEntity: false
         });
@@ -79,11 +79,13 @@ class Edit extends React.Component {
         this.setState({
             chosenItem: item,
             isCreationNewEntity: false
-        }, this.updateList);
+        }, () => {
+            this.props.listDataDownload(this.props.entityApi);
+        });
     };
 
     render() {
-        const {EditFractionForm, EditUnionForm, EditRelationForm} = this.madeChildren;
+        const {EditFractionForm, EditFractionFormNew, EditUnionForm, EditRelationForm} = this.madeChildren;
         const {searchValue, isSidePanelOn, isChangeEntityOn, isCreationNewEntity, chosenItem} = this.state;
         const {pcb, entityName, entityApi, entityData} = this.props;
 
@@ -110,7 +112,7 @@ class Edit extends React.Component {
                             </div>
                             <button
                                 className={`side-panel__btn--default change-entity`}
-                                disabled={entityApi === undefined}
+                                disabled={entityApi === undefined || isCreationNewEntity}
                                 onClick={this.handleToggleSidePanelSet}
                                 title={entityApi === undefined ? 'Choose entity first' : 'Click to choose other entity'}
                             >
@@ -148,8 +150,12 @@ class Edit extends React.Component {
                                     className={`side-panel__list`}
                                     api={entityApi}
                                     chosenItem={chosenItem}
-                                    clearItem={this.clearChosenItem}
+                                    clearItem={(...args) => {
+                                        this.clearChosenItem.apply(this, args);
+                                    }
+                                    }
                                     update={this.updateList}
+                                    disabled={isCreationNewEntity}
                                 />
                         }
                         <div className={`side-panel__footer ${isChangeEntityOn ? 'side-panel__footer--hidden' : ''}`}>
@@ -162,12 +168,22 @@ class Edit extends React.Component {
                 <main className={'edit-page__section entity-block'}>
                     <div className={'entity-block__name'}>{`${isCreationNewEntity ? 'new' : ''} ${entityName}`}</div>
                     {
-                        entityName !== 'fraction' || (!isCreationNewEntity && !entityData._id) ? null :
-                            <EditFractionForm.Component
-                                core={EditFractionForm.core}
-                                data={isCreationNewEntity ? {} : entityData}
-                                rootClass={'c-form'}
-                            />
+                        entityName === 'fraction' && (entityData._id || isCreationNewEntity) ? !isCreationNewEntity ?
+                                <EditFractionForm.Component
+                                    key={EditFractionForm.core.id}
+                                    core={EditFractionForm.core}
+                                    data={entityData}
+                                    rootClass={'c-form'}
+                                    quitItem={this.quitItem}
+                                    goToItem={this.goToItem}
+                                /> :
+                                <EditFractionFormNew.Component
+                                    key={EditFractionFormNew.core.id}
+                                    core={EditFractionFormNew.core}
+                                    rootClass={'c-form'}
+                                    quitItem={this.quitItem}
+                                    goToItem={this.goToItem}
+                                /> : null
                     }
                     {
                         entityName !== 'union' || (!isCreationNewEntity && !entityData._id) ? null :
@@ -178,14 +194,21 @@ class Edit extends React.Component {
                             />
                     }
                     {
-                        entityName !== 'relation' || (!isCreationNewEntity && !entityData._id) ? null :
-                            <EditRelationForm.Component
-                                core={EditRelationForm.core}
-                                data={isCreationNewEntity ? {} : entityData}
-                                rootClass={'c-form'}
-                                quitItem={this.quitItem}
-                                goToItem={this.goToItem}
-                            />
+                        entityName !== 'relation' || !entityData._id ? null :
+                            !isCreationNewEntity ?
+                                <EditRelationForm.Component
+                                    core={EditRelationForm.core}
+                                    data={entityData}
+                                    rootClass={'c-form'}
+                                    quitItem={this.quitItem}
+                                    goToItem={this.goToItem}
+                                /> :
+                                <EditFractionForm.Component
+                                    core={EditFractionFormNew.core}
+                                    rootClass={'c-form'}
+                                    quitItem={this.quitItem}
+                                    goToItem={this.goToItem}
+                                />
                     }
                 </main>
             </section>
@@ -201,4 +224,11 @@ const mapStateToProps = (state, props) => {
     }
 };
 
-export default connect(mapStateToProps)(Edit);
+const mapDispatchers = dispatch => {
+    return bindActionCreators({
+        clearListValue: () => valueChange('eL1', {}),
+        listDataDownload: (api) => dataDownload('eL1', api)
+    }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchers)(Edit);

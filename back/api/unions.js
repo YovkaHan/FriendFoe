@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const Union = require('../models/union');
+const {Union} = require('../models');
 
 /**endpoints ...*/
 router.get('/', (req, res) => {

@@ -4,6 +4,7 @@ export const pcbTemplate = {
             component: 'App',
             children: [
                 {alias: 'EditFractionForm', id: 'fF0'},
+                {alias: 'EditFractionFormNew', id: 'fF1'},
                 {alias: 'EditUnionForm', id: 'uF0'},
                 {alias: 'EditRelationForm', id: 'rF0'}
             ]
@@ -19,6 +20,15 @@ export const pcbTemplate = {
             component: 'EntityList1'
         },
         fF0: {
+            component: 'FractionForm',
+            relations: {
+                App: {
+                    id: 'app0',
+                    component: 'App',
+                }
+            }
+        },
+        fF1: {
             component: 'FractionForm',
             relations: {
                 App: {

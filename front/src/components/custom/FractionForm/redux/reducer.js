@@ -70,6 +70,31 @@ const cases = (type) => {
                 draft[id].data = R.clone(payload);
             };
         }
+        case TYPES.FORM_ITEM_APPLY: {
+            return (draft, payload, id) => {
+                draft[id].flags.transaction = true;
+            };
+        }
+        case TYPES.FORM_ITEM_APPLY_COMPLETE: {
+            return (draft, payload, id) => {
+                draft[id].transactionResult = payload;
+                draft[id].flags.transaction = false;
+                if(!payload.hasOwnProperty('errors')){
+                    draft[id].buffer = {};
+                }
+            };
+        }
+        case TYPES.FORM_ITEM_DELETE: {
+            return (draft, payload, id) => {
+                draft[id].flags.transaction = true;
+            };
+        }
+        case TYPES.FORM_ITEM_DELETE_COMPLETE: {
+            return (draft, payload, id) => {
+                draft[id].transactionResult = payload;
+                draft[id].flags.transaction = false;
+            };
+        }
         case TYPES.UPDATE_META_COMPLETE: {
             return (draft, payload, id) => {
                 draft[id].meta = payload;

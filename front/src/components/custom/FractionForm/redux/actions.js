@@ -29,11 +29,37 @@ export function updateMeta(id, pcb) {
     return ({type: TYPES.UPDATE_META, payload: pcb, id})
 }
 
+export function changeRelationFiled(id, action, object) {
+    return ({type: TYPES.CHANGE_RELATION_FIELD, payload: {action, object}, id})
+}
+
+export function applyEntityItem(id, pcb, itemId) {
+    return ({type: TYPES.FORM_ITEM_APPLY, id, payload: {pcb, _id: itemId}})
+}
+
+export function cancelEntityItem(id) {
+    return ({type: TYPES.FORM_ITEM_CANCEL, id})
+}
+
+export function deleteEntityItem(id, pcb, itemId) {
+    return ({type: TYPES.FORM_ITEM_DELETE, id, payload: {pcb, _id: itemId}})
+}
+
+export function copyDataToBuffer(id) {
+    return ({type: TYPES.FORM_DATA_COPY, id})
+}
+
+
 export default {
     initialize,
     flagHandle,
     createItem,
     deleteItem,
     changeField,
-    updateMeta
+    updateMeta,
+    changeRelationFiled,
+    applyEntityItem,
+    cancelEntityItem,
+    deleteEntityItem,
+    copyDataToBuffer
 }

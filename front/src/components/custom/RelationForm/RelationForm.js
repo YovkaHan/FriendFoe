@@ -28,7 +28,8 @@ class RelationForm extends React.Component {
         data: {},
         bufferData: {},
         quitItem: () => {
-        }
+        },
+        newFlag: false
     };
 
     constructor(props) {
@@ -52,12 +53,12 @@ class RelationForm extends React.Component {
 
     static getDerivedStateFromProps(props, state) {
         const propsName = props.bufferData.hasOwnProperty('name') ? props.bufferData.name : props.data.name;
-        const propsIcon = props.bufferData.hasOwnProperty('color') ? props.bufferData.color : props.data.color;
+        const propsColor = props.bufferData.hasOwnProperty('color') ? props.bufferData.color : props.data.color;
 
         return {
             ...state,
             name: propsName !== undefined ? propsName : '',
-            color: propsIcon !== undefined ? propsIcon : ''
+            color: propsColor !== undefined ? propsColor : ''
         }
     }
 
@@ -107,6 +108,11 @@ class RelationForm extends React.Component {
                 if (!this.props.transactionResult.hasOwnProperty('errors')) {
                     this.props.goToItem(this.props.data.hasOwnProperty('_id') ? this.props.data._id : this.props.transactionResult._id);
                 }
+            });
+        }
+        if(this.props.newFlag !== prevProps.newFlag){
+            this.setState({
+                addNewRelation: false
             });
         }
     }
@@ -174,7 +180,8 @@ RelationForm.propTypes = {
     pcb: PropTypes.object,
     data: PropTypes.object,
     bufferData: PropTypes.object,
-    formFields: PropTypes.object
+    formFields: PropTypes.object,
+    newFlag: PropTypes.bool
 };
 
 const mapStateToProps = (state, props) => {

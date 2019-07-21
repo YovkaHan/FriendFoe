@@ -26,6 +26,7 @@ class Entity extends React.Component {
 class EntityList extends React.Component {
 
     static defaultProps = {
+        disabled: false,
         className: '',
         rootClass: '',
         value: {},
@@ -41,13 +42,6 @@ class EntityList extends React.Component {
         if(props.chosenItem){
             this.props.chooseItem(props.chosenItem)
         }
-
-        props.clearItem(()=>{
-            props.valueChange({});
-            props.dataDownload(props.api);
-        });
-
-        props.update(this.handleUpdate)
     }
 
     handleChooseItem = (item) => {
@@ -66,7 +60,7 @@ class EntityList extends React.Component {
 
     render() {
         const {props, handleClick} = this;
-        const {className, rootClass, listData} = props;
+        const {className, rootClass, listData, disabled} = props;
         const mainClass = 'c-entity-list';
 
         return (
@@ -82,6 +76,7 @@ class EntityList extends React.Component {
                         rootClass={'list'}
                         itemProps={{rootClass:'c-entity-list', onChoose: this.handleChooseItem}}
                     />
+                    {disabled ? <div className={'c-entity-list__disabled'}/> : null}
                 </div>
             </div>
         )
@@ -93,6 +88,7 @@ class EntityList extends React.Component {
 }
 
 EntityList.propTypes = {
+    disabled: PropTypes.bool,
     className: PropTypes.string,
     rootClass: PropTypes.string,
     value: PropTypes.object,
