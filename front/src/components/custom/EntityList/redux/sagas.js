@@ -51,7 +51,9 @@ function* flagHandleComplete({type, payload, id}) {
 function* dataDownloadHandle(action) {
     const {id, payload} = action;
     yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: true}, id});
-    const data = yield call(getData, payload);
-    yield put({type: TYPES.CHANGE, payload: {key: 'data', value: data}, id});
+    const result = yield call(getData, payload);
+    if(result.hasOwnProperty('data')){
+        yield put({type: TYPES.CHANGE, payload: {key: 'data', value: result.data}, id});
+    }
     yield put({type: TYPES.FLAGS, payload: {key: 'loading', value: false}, id});
 }

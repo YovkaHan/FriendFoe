@@ -52,6 +52,9 @@ function* initItemHandle({id}) {
     const payload = {
         configs: {}
     };
-    payload.configs = yield call(getData, '/api/configs');
+    const result = yield call(getData, '/api/configs');
+    if(result.hasOwnProperty('data')){
+        payload.configs = result.data;
+    }
     yield put({type: TYPES.ITEM_INIT_COMPLETE, payload, id});
 }

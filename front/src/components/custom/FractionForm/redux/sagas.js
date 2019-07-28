@@ -65,9 +65,11 @@ function* updateMetaInfoHandle({payload, id}) {
     const relationObject = R.path(['configs', 'entities'], appObject).find(item => item._id === 'relation');
     const fractionObject = R.path(['configs', 'entities'], appObject).find(item => item._id === 'fraction');
 
-    if(relationObject !== undefined){
-        resultPayload.relations = yield call(getData, relationObject.api);
-        resultPayload.fractions = yield call(getData, fractionObject.api);
+    if (relationObject !== undefined) {
+        const relationResult = yield call(getData, relationObject.api);
+        const fractionResult = yield call(getData, fractionObject.api);
+        resultPayload.relations = relationResult.hasOwnProperty('data') ? relationResult.data : [];
+        resultPayload.fractions = fractionResult.hasOwnProperty('data') ? fractionResult.data : [];
     }
 
     yield put({type: TYPES.UPDATE_META_COMPLETE, payload: resultPayload, id});
@@ -115,20 +117,23 @@ function* applyEntityItemHandle({payload, id}) {
     const customRelationObject = R.path(['configs', 'entities'], appObject).find(item => item._id === 'fraction');
     let transactionResult = {};
 
-    const customRelationTransactionResult = yield call(postData, `${fractionObject.api}/${_id}/relations`, {data: componentObject.buffer.relations.filter(r=> !r.hasOwnProperty('_id'))});
+    if (componentObject.buffer.hasOwnProperty('relations')) {
+        const customRelationTransactionResult = yield call(postData, `${fractionObject.api}/${_id}/relations`, {data: componentObject.buffer.relations.filter(r => !r.hasOwnProperty('_id'))});
 
-    if(customRelationTransactionResult.hasOwnProperty('errors')){
+        if (customRelationTransactionResult.hasOwnProperty('errors')) {
 
-    }else {
-        const relationsToAdd = componentObject.buffer.relations.filter(r => !!r.hasOwnProperty('_id'));
-        componentObject.buffer.relations = Array.prototype.concat(relationsToAdd, customRelationTransactionResult);
-        if(_id){
-            transactionResult = yield call(putData, `${fractionObject.api}/${_id}`, componentObject.buffer);
-        }else {
-            transactionResult = yield call(postData, fractionObject.api, componentObject.buffer);
+        } else if(customRelationTransactionResult.hasOwnProperty('data')){
+            const relationsToAdd = componentObject.buffer.relations.filter(r => !!r.hasOwnProperty('_id'));
+            componentObject.buffer.relations = Array.prototype.concat(relationsToAdd, customRelationTransactionResult.data);
         }
-
-        yield put({type: TYPES.FORM_ITEM_APPLY_COMPLETE, payload: transactionResult, id});
+    }
+    if (_id) {
+        transactionResult = yield call(putData, `${fractionObject.api}/${_id}`, componentObject.buffer);
+    } else {
+        transactionResult = yield call(postData, fractionObject.api, componentObject.buffer);
+    }
+    if(transactionResult.hasOwnProperty('data')){
+        yield put({type: TYPES.FORM_ITEM_APPLY_COMPLETE, payload: transactionResult.data, id});
     }
 }
 
@@ -143,5 +148,7 @@ function* deleteEntityItemHandle({payload, id}) {
 
     const transactionResult = yield call(deleteData, `${relationObject.api}/${_id}`);
 
-    yield put({type: TYPES.FORM_ITEM_DELETE_COMPLETE, payload: transactionResult, id});
+    if(transactionResult.hasOwnProperty('data')) {
+        yield put({type: TYPES.FORM_ITEM_DELETE_COMPLETE, payload: transactionResult, id});
+    }
 }

@@ -34,7 +34,8 @@ class Edit extends React.Component {
             EditFractionForm: null,
             EditFractionFormNew: null,
             EditUnionForm: null,
-            EditRelationForm: null
+            EditRelationForm: null,
+            EditRelationFormNew: null
         };
         Object.keys(this.madeChildren).map(c => {
             const name = props.pcb.children[c].component;
@@ -85,9 +86,11 @@ class Edit extends React.Component {
     };
 
     render() {
-        const {EditFractionForm, EditFractionFormNew, EditUnionForm, EditRelationForm} = this.madeChildren;
+        const {EditFractionForm, EditFractionFormNew, EditUnionForm, EditRelationForm, EditRelationFormNew} = this.madeChildren;
         const {searchValue, isSidePanelOn, isChangeEntityOn, isCreationNewEntity, chosenItem} = this.state;
         const {pcb, entityName, entityApi, entityData} = this.props;
+
+        const mainContent = entityData._id || isCreationNewEntity;
 
         return (
             <section className={'the-app__page edit-page'}>
@@ -168,22 +171,23 @@ class Edit extends React.Component {
                 <main className={'edit-page__section entity-block'}>
                     <div className={'entity-block__name'}>{`${isCreationNewEntity ? 'new' : ''} ${entityName}`}</div>
                     {
-                        entityName === 'fraction' && (entityData._id || isCreationNewEntity) ? !isCreationNewEntity ?
-                                <EditFractionForm.Component
-                                    key={EditFractionForm.core.id}
-                                    core={EditFractionForm.core}
-                                    data={entityData}
-                                    rootClass={'c-form'}
-                                    quitItem={this.quitItem}
-                                    goToItem={this.goToItem}
-                                /> :
-                                <EditFractionFormNew.Component
-                                    key={EditFractionFormNew.core.id}
-                                    core={EditFractionFormNew.core}
-                                    rootClass={'c-form'}
-                                    quitItem={this.quitItem}
-                                    goToItem={this.goToItem}
-                                /> : null
+                        mainContent && entityName === 'fraction' ?
+                            !isCreationNewEntity ?
+                            <EditFractionForm.Component
+                                key={EditFractionForm.core.id}
+                                core={EditFractionForm.core}
+                                data={entityData}
+                                rootClass={'c-form'}
+                                quitItem={this.quitItem}
+                                goToItem={this.goToItem}
+                            /> :
+                            <EditFractionFormNew.Component
+                                key={EditFractionFormNew.core.id}
+                                core={EditFractionFormNew.core}
+                                rootClass={'c-form'}
+                                quitItem={this.quitItem}
+                                goToItem={this.goToItem}
+                            /> : null
                     }
                     {
                         entityName !== 'union' || (!isCreationNewEntity && !entityData._id) ? null :
@@ -194,21 +198,21 @@ class Edit extends React.Component {
                             />
                     }
                     {
-                        entityName !== 'relation' || !entityData._id ? null :
+                        mainContent && entityName === 'relation' ?
                             !isCreationNewEntity ?
                                 <EditRelationForm.Component
-                                    core={EditRelationForm.core}
-                                    data={entityData}
-                                    rootClass={'c-form'}
-                                    quitItem={this.quitItem}
-                                    goToItem={this.goToItem}
-                                /> :
-                                <EditFractionForm.Component
-                                    core={EditFractionFormNew.core}
-                                    rootClass={'c-form'}
-                                    quitItem={this.quitItem}
-                                    goToItem={this.goToItem}
-                                />
+                                core={EditRelationForm.core}
+                                data={entityData}
+                                rootClass={'c-form'}
+                                quitItem={this.quitItem}
+                                goToItem={this.goToItem}
+                            /> :
+                            <EditRelationForm.Component
+                                core={EditRelationFormNew.core}
+                                rootClass={'c-form'}
+                                quitItem={this.quitItem}
+                                goToItem={this.goToItem}
+                            /> : null
                     }
                 </main>
             </section>

@@ -71,7 +71,9 @@ function* applyEntityItemHandle({payload, id}) {
         transactionResult = yield call(postData, relationObject.api, componentObject.buffer);
     }
 
-    yield put({type: TYPES.FORM_ITEM_APPLY_COMPLETE, payload: transactionResult, id});
+    if(transactionResult.hasOwnProperty('data')){
+        yield put({type: TYPES.FORM_ITEM_APPLY_COMPLETE, payload: transactionResult, id});
+    }
 }
 
 function* deleteEntityItemHandle({payload, id}) {
@@ -85,5 +87,7 @@ function* deleteEntityItemHandle({payload, id}) {
 
     const transactionResult = yield call(deleteData, `${relationObject.api}/${_id}`);
 
-    yield put({type: TYPES.FORM_ITEM_DELETE_COMPLETE, payload: transactionResult, id});
+    if(transactionResult.hasOwnProperty('data')) {
+        yield put({type: TYPES.FORM_ITEM_DELETE_COMPLETE, payload: transactionResult, id});
+    }
 }
