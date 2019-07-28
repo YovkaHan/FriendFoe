@@ -4,6 +4,7 @@ import EntityList from '../components/custom/EntityList/redux/reducer';
 import FractionForm from '../components/custom/FractionForm/redux/reducer';
 import UnionForm from '../components/custom/UnionForm/redux/reducer';
 import RelationForm from '../components/custom/RelationForm/redux/reducer';
+import FriendFoePicture from '../components/custom/FriendFoePicture/redux/reducer';
 import {combineReducers} from 'redux';
 
 export default {
@@ -13,6 +14,7 @@ export default {
         EntityList: EntityList(),
         FractionForm: FractionForm(),
         UnionForm: UnionForm(),
-        RelationForm: RelationForm()
+        RelationForm: RelationForm(),
+        FriendFoePicture: FriendFoePicture()
     })
 };

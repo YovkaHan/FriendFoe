@@ -11,7 +11,7 @@ import App from './src/components/custom/App';
 import reducers from './src/redux/reducers';
 import rootSaga from './src/redux/sagas';
 
-import "./vendor/normalize.css";
+import './vendor/normalize.css';
 import {pcbGenerate} from './src/common/pcb';
 import {pcbTemplate} from './src/common/appConfig';
 

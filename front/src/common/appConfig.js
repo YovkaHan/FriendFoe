@@ -7,7 +7,8 @@ export const pcbTemplate = {
                 {alias: 'EditFractionFormNew', id: 'fF1'},
                 {alias: 'EditUnionForm', id: 'uF0'},
                 {alias: 'EditRelationForm', id: 'rF0'},
-                {alias: 'EditRelationFormNew', id: 'rF1'}
+                {alias: 'EditRelationFormNew', id: 'rF1'},
+                {alias: 'MainFriendFoePicture', id: 'ffP0'}
             ]
         },
         b0: {component: 'Button'},
@@ -58,6 +59,15 @@ export const pcbTemplate = {
         },
         rF1: {
             component: 'RelationForm',
+            relations: {
+                App: {
+                    id: 'app0',
+                    component: 'App',
+                }
+            }
+        },
+        ffP0: {
+            component: 'FriendFoePicture',
             relations: {
                 App: {
                     id: 'app0',

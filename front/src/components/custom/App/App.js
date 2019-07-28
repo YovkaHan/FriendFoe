@@ -18,28 +18,51 @@ class App extends React.Component {
         this.state = {
             currentPage: 'home',
             headerIsVisible: true,
-            footerIsVisible: true
+            footerIsVisible: true,
+            headerModificator: ''
         };
 
         props.initItem();
     };
 
     switchPage = (page) => {
-        this.setState({
-            currentPage: page,
-            headerIsVisible: page !== 'edit',
-            footerIsVisible: page !== 'edit'
-        });
+        switch (page) {
+            case 'main': {
+                this.setState({
+                    currentPage: page,
+                    headerIsVisible: true,
+                    footerIsVisible: false,
+                    headerModificator: 'black-white'
+                });
+                break;
+            }
+            case 'edit': {
+                this.setState({
+                    currentPage: page,
+                    headerIsVisible: false,
+                    footerIsVisible: false
+                });
+                break;
+            }
+            default: {
+                this.setState({
+                    currentPage: page,
+                    headerIsVisible: true,
+                    footerIsVisible: true,
+                    headerModificator: ''
+                });
+            }
+        }
     };
 
     render() {
         const {pcbMade, flags} = this.props;
-        const {headerIsVisible, footerIsVisible} = this.state;
+        const {headerIsVisible, footerIsVisible, headerModificator} = this.state;
 
         return flags.hasOwnProperty('initiated') && flags.initiated ?
             (
                 <div className={`the-app`}>
-                    <Header visible={headerIsVisible}/>
+                    <Header visible={headerIsVisible} modificator={headerModificator}/>
                     <Route
                         exact path="/"
                         render={props => <Home {...props} pcb={pcbMade} onInit={() => this.switchPage('home')}/>}
@@ -89,10 +112,10 @@ export default connect(mapStateToProps, mapDispatchers)(App);
 
 /**---------*/
 function Header(props) {
-    const {visible} = props;
+    const {visible, modificator} = props;
 
     return (
-        <header className={'main-header'} style={visible ? {} : {display: 'none'}}>
+        <header className={`main-header ${modificator ? 'main-header--' + modificator : ''}`.trim()} style={visible ? {} : {display: 'none'}}>
             <nav className={'navs'}>
                 <div className={'navs__item'}>
                     <Link to="/main">Main</Link>

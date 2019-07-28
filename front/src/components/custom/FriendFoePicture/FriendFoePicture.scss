@@ -1,0 +1,83 @@
+$filter-height: 400px;
+
+.c-picture {
+  position: absolute;
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+
+  &__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: inherit;
+    height: inherit;
+
+    background: black;
+  }
+
+  &__filter {
+    display: flex;
+    width: 100%;
+    height: 310px;
+    background: hsla(0,0%,100%,.15);
+    padding-top: 80px;
+    flex-shrink: 0;
+
+    .item {
+      &:first-child {
+        border-left: none;
+      }
+
+      &__name {
+        padding: 10px;
+        text-align: center;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.40);
+      }
+
+      &__options {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  }
+  &__canvas {
+    width: 100%;
+    height: 100%;
+    background: white;
+  }
+
+  .filter {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    &__item {
+      padding: 5px;
+      height: calc(100% - 10px);
+      border-left: 1px solid rgba(255, 255, 255, 0.40);
+      min-width: 200px;
+      flex-grow: 1;
+    }
+
+    &-item-option {
+      display: inline-flex;
+      width: 100%;
+      max-width: 200px;
+      justify-content: space-between;
+      align-items: center;
+
+      label {
+        color: white;
+        text-transform: capitalize;
+      }
+      input {
+
+      }
+    }
+  }
+}
