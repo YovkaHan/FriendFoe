@@ -22,6 +22,30 @@ const innerClass = (suffix, mainClass, rootClass) => {
     return `${mainClass}__${suffix} ${rootClass ? rootClass + '__' + suffix : ''}`.trim()
 };
 
+const amountToRadius = (amount) => {
+    if(amount >= 1 && amount < 1000) {
+        return 5;
+    } else if (amount >= 1000 && amount < 5000){
+        return 10;
+    } else if (amount >= 5000 && amount < 10000){
+        return 15;
+    } else if (amount >= 10000 && amount < 20000){
+        return 20;
+    } else if (amount >= 20000 && amount < 30000){
+        return 25;
+    } else if (amount >= 30000 && amount < 50000){
+        return 30;
+    } else if (amount >= 50000 && amount < 100000){
+        return 35;
+    } else if (amount >= 100000 && amount < 200000){
+        return 40;
+    } else if (amount >= 200000 && amount < 500000){
+        return 45;
+    } else {
+        return 50;
+    }
+};
+
 function FilterItemOptions({data = {}, filterData = {}, handler = ()=>{}}) {
     const clickHandler = (e, key) => {
         handler(key, e.target.checked);
@@ -69,6 +93,7 @@ class FriendFoePicture extends React.Component {
         this.props.filterChange(path, value)
     };
 
+
     componentDidUpdate(prevProps, prevState) {
         if(!this.props.isLoading && prevProps.isLoading !== this.props.isLoading){
            this.setState({initCanvas: true})
@@ -89,6 +114,38 @@ class FriendFoePicture extends React.Component {
         const {className, rootClass, data, filter, isLoading} = props;
         const {canvasId} = state;
         const mainClass = 'c-picture';
+
+        if(Picture.isInitiated()){
+            /**Fractions*/
+            const fractions = Picture.getPoints();
+            const fractionsThatShouldBeAdded = Object.keys(filter.fractions).filter(f=>filter.fractions[f]);
+
+            if(fractionsThatShouldBeAdded.includes('all')){
+                Object.keys(filter.fractions).map(f=>{
+                    if(f !== 'all'){
+                        const fraction = data.fractions.find(item => item._id === f);
+
+                        if(fraction !== undefined && !fractions.includes(f)){
+                            Picture.addPoint(amountToRadius(fraction.amount), f);
+                            console.log(f, amountToRadius(fraction.amount));
+                        }
+                    }
+                })
+            }else {
+                fractions.map(f=>{
+                    if(!fractionsThatShouldBeAdded.includes(f)){
+                        Picture.removePoint(f);
+                    }
+                });
+                fractionsThatShouldBeAdded.map(f=>{
+                    if(!fractions.includes(f)){
+                        const fraction = data.fractions.find(item => item._id === f);
+                        Picture.addPoint(amountToRadius(fraction.amount), f);
+                    }
+                })
+            }
+            /**Fractions*/
+        }
 
         return (
             <div

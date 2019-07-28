@@ -6,7 +6,9 @@ import uniqid from 'uniqid';
  * */
 const tickTime = 1000 / 60;
 const mouse = {x: undefined, y: undefined};
-const core = {};
+const core = {
+    initiated: false
+};
 
 /**
  * Common Functions
@@ -362,15 +364,29 @@ CirclePoints.prototype = (function () {
 /**
  * Side Functions
  * */
-function addPoint() {
-    const radius = Math.random() * 50 + 20;
+function addPoint(radius, id) {
+    const _radius = radius !== undefined ? radius : Math.random() * 45 + 5;
     if(core.hasOwnProperty('CP')){
-        core.CP.pointInit(new Point({x: 300, y: 300}, radius, 'RGBA(50,50,50, 1)'));
+        const newPoint = new Point(
+            {x: 300, y: 300},
+            _radius,
+            'RGBA(50,50,50, 1)',
+            undefined,
+            id
+        );
+        core.CP.pointInit(newPoint);
     }
 }
 function removePoint(id) {
     if(core.hasOwnProperty('CP')){
         core.CP.deletePoint(id);
+    }
+}
+function getPoints() {
+    if(core.hasOwnProperty('CP')){
+        return core.CP.points.map(p => p.id);
+    }else {
+        return [];
     }
 }
 
@@ -416,9 +432,9 @@ function CanvasInit(canvasId) {
 
     core.CP = new CirclePoints({x: canvas.width / 2, y: canvas.height / 2}, 300);
 
-    core.CP.pointInit(new Point({x: 300, y: 300}, 20, 'RGBA(50,50,50, 1)'));
-    core.CP.pointInit(new Point({x: 300, y: 300}, 25, 'RGBA(50,50,50, 1)'));
-    core.CP.pointInit(new Point({x: 300, y: 300}, 30, 'RGBA(50,50,50, 1)'));
+    // core.CP.pointInit(new Point({x: 300, y: 300}, 20, 'RGBA(50,50,50, 1)'));
+    // core.CP.pointInit(new Point({x: 300, y: 300}, 25, 'RGBA(50,50,50, 1)'));
+    // core.CP.pointInit(new Point({x: 300, y: 300}, 30, 'RGBA(50,50,50, 1)'));
 
     // Start Update
 
@@ -435,12 +451,15 @@ function CanvasInit(canvasId) {
         requestAnimationFrame(loop);
     };
     loop();
+    core.initiated = true;
 }
 
 export default {
     init: CanvasInit,
     addPoint,
-    removePoint
+    removePoint,
+    getPoints,
+    isInitiated: ()=>core.initiated
 }
 
 
