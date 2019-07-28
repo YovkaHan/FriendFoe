@@ -183,6 +183,7 @@ class FriendFoePicture extends React.Component {
     }
 
     componentWillUnmount() {
+        Picture.destroy();
         this.props.deleteComponent()
     }
 }

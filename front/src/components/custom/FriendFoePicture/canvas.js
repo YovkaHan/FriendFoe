@@ -459,7 +459,8 @@ export default {
     addPoint,
     removePoint,
     getPoints,
-    isInitiated: ()=>core.initiated
+    isInitiated: () => core.initiated,
+    destroy: () => core.initiated = false
 }
 
 
